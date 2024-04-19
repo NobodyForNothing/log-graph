@@ -1,0 +1,11 @@
+[package]
+name = "gimps-graph"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+chrono = "0.4.38"
+log = "0.4.21"
+tiny-skia = "0.11.4"
+tiny-skia-path = "0.11.4"
+
