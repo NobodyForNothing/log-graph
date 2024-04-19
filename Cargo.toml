@@ -1,5 +1,5 @@
 [package]
-name = "gimps-graph"
+name = "log-graph"
 version = "0.1.0"
 edition = "2021"
 
