@@ -4,7 +4,8 @@ use tiny_skia::{Color, Paint, Pixmap};
 use tiny_skia_path::{PathBuilder, Stroke, Transform};
 use crate::parser::Entry;
 
-pub fn draw(data: HashMap<u64, Vec<Entry>>) -> Result<(), Box<dyn Error>> {
+/// Draw a graph from [data] and store at [png_path].
+pub fn draw(data: HashMap<u64, Vec<Entry>>, png_path: String) -> Result<(), Box<dyn Error>> {
     let colors: [Color; 7] = [
         Color::from_rgba8(255,0,0,255),
         Color::from_rgba8(0,255,0,255),
@@ -24,7 +25,7 @@ pub fn draw(data: HashMap<u64, Vec<Entry>>) -> Result<(), Box<dyn Error>> {
 
     let transform = Transform::identity();
 
-    for (i, (max, line)) in data.iter().enumerate() {
+    for (i, (series, line)) in data.iter().enumerate() {
         let mut pb = PathBuilder::new();
         pb.move_to(0., 0.);
         let min_val = line.iter().min_by_key(|e| e.value).unwrap().value;
@@ -39,12 +40,13 @@ pub fn draw(data: HashMap<u64, Vec<Entry>>) -> Result<(), Box<dyn Error>> {
         let mut stroke = Stroke::default();
         stroke.width = 20.;
 
-        paint.set_color(colors[i % colors.len()]);
-        println!("{max_val}: {:?}", colors[i % colors.len()]);
+        let color = colors[i % colors.len()];
+        paint.set_color(color);
+        println!("{series}: r{} g{}, b{}", &color.red(), &color.green(), &color.blue());
         pixmap.stroke_path(&path, &paint, &stroke, transform, None);
     }
 
-    pixmap.save_png("image.png").unwrap();
+    pixmap.save_png(png_path).unwrap();
 
     Ok(())
 }

@@ -4,7 +4,7 @@ use std::io::{BufRead, BufReader};
 use std::str::FromStr;
 use chrono::NaiveDateTime;
 
-pub fn parse_file(file: &str) -> Result<HashMap<u64, Vec<Entry>>, std::io::Error> {
+pub fn parse_file(file: String) -> Result<HashMap<u64, Vec<Entry>>, std::io::Error> {
     let file = File::open(file)?;
     let file = BufReader::new(file);
 
@@ -17,7 +17,7 @@ pub fn parse_file(file: &str) -> Result<HashMap<u64, Vec<Entry>>, std::io::Error
             last_timestamp = Some(parse_time(&line));
         } else if line.starts_with("Iter") {
             if last_timestamp.is_none() {
-                eprintln!("Bad file: Skipping line because there is no timestamp in context");
+                eprintln!("Bad file: Skipping line {} because there is no timestamp in context", line_idx);
                 continue;
             }
             let values = parse_entry(&line);
