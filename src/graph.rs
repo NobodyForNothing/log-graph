@@ -4,7 +4,7 @@ use tiny_skia_path::{PathBuilder, Stroke, Transform};
 use crate::data::LogData;
 
 /// Draw a graph from [data] and store at [png_path].
-pub fn draw(data: LogData, png_path: String) -> Result<(), Box<dyn Error>> {
+pub fn draw(data: LogData, png_path: String, line_width: f32) -> Result<(), Box<dyn Error>> {
     let data = data.data;
     let colors: [Color; 7] = [
         Color::from_rgba8(255,0,0,255),
@@ -38,7 +38,7 @@ pub fn draw(data: LogData, png_path: String) -> Result<(), Box<dyn Error>> {
         }
         let path = pb.finish().unwrap();
         let mut stroke = Stroke::default();
-        stroke.width = 20.;
+        stroke.width = line_width;
 
         let color = colors[i % colors.len()];
         paint.set_color(color);

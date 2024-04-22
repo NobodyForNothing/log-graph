@@ -18,6 +18,10 @@ struct Args {
     /// Whether to generate a graph of the rate of change of the values
     #[arg(short, long)]
     rate: bool,
+
+    /// Width of the line in the graph
+    #[arg(short, long, default_value_t = 8.)]
+    width: f32,
 }
 
 fn main() {
@@ -28,7 +32,7 @@ fn main() {
     if args.rate {
         data = data.rate();
     }
-    draw(data, args.output_png)
+    draw(data, args.output_png, args.width)
         .expect("Failed to draw graph.");
 
     //println!("{:?}", &f.unwrap().len());
