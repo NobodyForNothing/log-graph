@@ -3,13 +3,14 @@ use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::str::FromStr;
 use chrono::NaiveDateTime;
+use crate::data::{Entry, LogData};
 
-pub fn parse_file(file: String) -> Result<HashMap<u64, Vec<Entry>>, std::io::Error> {
+pub fn parse_file(file: String) -> Result<LogData, std::io::Error> {
     let file = File::open(file)?;
     let file = BufReader::new(file);
 
     // key: max count, value: value series
-    let mut parsed: HashMap<u64, Vec<Entry>> = HashMap::new();
+    let mut parsed= HashMap::new();
     let mut last_timestamp: Option<i64> = None;
     for (line_idx, line) in file.lines().enumerate() {
         let line = line?;
@@ -23,17 +24,17 @@ pub fn parse_file(file: String) -> Result<HashMap<u64, Vec<Entry>>, std::io::Err
             let values = parse_entry(&line);
             let entry = Entry {
                 time: last_timestamp.expect("Check above"),
-                value: values.0
+                value: values.0 as i64
             };
             parsed.entry(values.1)
-                .and_modify(|vec| vec.push(entry.clone()))
+                .and_modify(|vec: &mut Vec<Entry>| vec.push(entry.clone()))
                 .or_insert(vec![entry]);
         } else {
             log::info!(target: "parser", "unrecognized line {}", line_idx)
         }
     }
 
-    Ok(parsed)
+    Ok(LogData { data: parsed } )
 }
 
 // Parses time of format `[Sun Apr 14 17:05:29 2024]` to unix seconds.
@@ -48,11 +49,4 @@ fn parse_entry(line: &String) -> (u64, u64) {
     let val = u64::from_str(values[0]).expect("Unparsable number");
     let div = u64::from_str(values[1]).expect("Unparsable number");
     (val, div)
-}
-
-#[derive(Clone)]
-pub struct Entry {
-    /// Unix timestamp seconds.
-    pub time: i64,
-    pub value: u64,
 }

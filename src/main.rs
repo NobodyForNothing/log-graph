@@ -3,6 +3,7 @@ use crate::graph::draw;
 
 mod parser;
 mod graph;
+mod data;
 
 /// Primitive tool for creating graphs from simple log files
 #[derive(Parser)]
@@ -13,13 +14,20 @@ struct Args {
 
     /// Path of the output image
     output_png: String,
+
+    /// Whether to generate a graph of the rate of change of the values
+    #[arg(short, long)]
+    rate: bool,
 }
 
 fn main() {
     let args = Args::parse();
 
-    let data = parser::parse_file(args.input_file)
+    let mut data = parser::parse_file(args.input_file)
         .expect("Failed to parse input file.");
+    if args.rate {
+        data = data.rate();
+    }
     draw(data, args.output_png)
         .expect("Failed to draw graph.");
 

@@ -1,11 +1,11 @@
-use std::collections::HashMap;
 use std::error::Error;
 use tiny_skia::{Color, Paint, Pixmap};
 use tiny_skia_path::{PathBuilder, Stroke, Transform};
-use crate::parser::Entry;
+use crate::data::LogData;
 
 /// Draw a graph from [data] and store at [png_path].
-pub fn draw(data: HashMap<u64, Vec<Entry>>, png_path: String) -> Result<(), Box<dyn Error>> {
+pub fn draw(data: LogData, png_path: String) -> Result<(), Box<dyn Error>> {
+    let data = data.data;
     let colors: [Color; 7] = [
         Color::from_rgba8(255,0,0,255),
         Color::from_rgba8(0,255,0,255),
