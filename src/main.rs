@@ -1,9 +1,9 @@
-use clap::Parser;
 use crate::graph::draw;
+use clap::Parser;
 
-mod parser;
-mod graph;
 mod data;
+mod graph;
+mod parser;
 
 /// Primitive tool for creating graphs from simple log files
 #[derive(Parser)]
@@ -27,13 +27,11 @@ struct Args {
 fn main() {
     let args = Args::parse();
 
-    let mut data = parser::parse_file(args.input_file)
-        .expect("Failed to parse input file.");
+    let mut data = parser::parse_file(args.input_file).expect("Failed to parse input file.");
     if args.rate {
         data = data.rate();
     }
-    draw(data, args.output_png, args.width)
-        .expect("Failed to draw graph.");
+    draw(data, args.output_png, args.width).expect("Failed to draw graph.");
 
     //println!("{:?}", &f.unwrap().len());
     //println!("{:?}", &f.unwrap().values().collect::<Vec<_>>().first().unwrap().len());

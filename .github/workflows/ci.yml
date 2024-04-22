@@ -14,4 +14,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: cargo build --verbose
-
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: cargo fmt --check
+        continue-on-error: true
+      - run: cargo test

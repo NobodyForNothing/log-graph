@@ -1,19 +1,19 @@
+use crate::data::LogData;
 use std::error::Error;
 use tiny_skia::{Color, Paint, Pixmap};
 use tiny_skia_path::{PathBuilder, Stroke, Transform};
-use crate::data::LogData;
 
 /// Draw a graph from [data] and store at [png_path].
 pub fn draw(data: LogData, png_path: String, line_width: f32) -> Result<(), Box<dyn Error>> {
     let data = data.data;
     let colors: [Color; 7] = [
-        Color::from_rgba8(255,0,0,255),
-        Color::from_rgba8(0,255,0,255),
-        Color::from_rgba8(0,0,255,255),
-        Color::from_rgba8(0,255,255,255),
-        Color::from_rgba8(255,255, 0,255),
-        Color::from_rgba8(255,0, 255,255),
-        Color::from_rgba8(0,0, 0,255),
+        Color::from_rgba8(255, 0, 0, 255),
+        Color::from_rgba8(0, 255, 0, 255),
+        Color::from_rgba8(0, 0, 255, 255),
+        Color::from_rgba8(0, 255, 255, 255),
+        Color::from_rgba8(255, 255, 0, 255),
+        Color::from_rgba8(255, 0, 255, 255),
+        Color::from_rgba8(0, 0, 0, 255),
     ];
 
     let mut paint = Paint::default();
@@ -33,8 +33,12 @@ pub fn draw(data: LogData, png_path: String, line_width: f32) -> Result<(), Box<
         let min_time = line.iter().min_by_key(|e| e.time).unwrap().time;
         let max_time = line.iter().max_by_key(|e| e.time).unwrap().time;
         for p in line {
-            pb.line_to((((p.time - min_time) as f32) / (max_time - min_time) as f32) * pixmap.width() as f32,
-                       (&((p.value - min_val) as f32) / (max_val - min_val) as f32) * pixmap.height() as f32);
+            pb.line_to(
+                (((p.time - min_time) as f32) / (max_time - min_time) as f32)
+                    * pixmap.width() as f32,
+                (&((p.value - min_val) as f32) / (max_val - min_val) as f32)
+                    * pixmap.height() as f32,
+            );
         }
         let path = pb.finish().unwrap();
         let mut stroke = Stroke::default();
@@ -42,7 +46,12 @@ pub fn draw(data: LogData, png_path: String, line_width: f32) -> Result<(), Box<
 
         let color = colors[i % colors.len()];
         paint.set_color(color);
-        println!("{series}: r{} g{}, b{}", &color.red(), &color.green(), &color.blue());
+        println!(
+            "{series}: r{} g{}, b{}",
+            &color.red(),
+            &color.green(),
+            &color.blue()
+        );
         pixmap.stroke_path(&path, &paint, &stroke, transform, None);
     }
 
